@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Interactive</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="layout-wrapper">
+        <aside class="leaderboard">
+            <h2 class="leaderboard-title">TOP PLAYERS</h2>
+            <ul class="vscore-list leaderboard-grid"></ul>
+        </aside>
+
+        <main class="main-area">
+            <div id="header-container" style="display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin-bottom: 16px;">
+                <h1 style="margin: 0;">Wordle Interactive</h1>
+                <img src="https://imgur.com/lgAeFYk.png" alt="Wordle Interactive" style="height: 48px; width: auto; border-radius: 8px;" />
+            </div>
+
+            <!-- 👇 Nuevo wrapper -->
+            <div class="game-wrapper">
+                <!-- TIMER GLOBAL DE LA RONDA -->
+                <div id="round-timer" class="round-timer hidden">
+                    <div id="round-timer-time" class="rt-time">01:00</div>
+                </div>
+
+                <div id="game-container">
+                    <div id="board">
+                        <!-- Rows will be created by JavaScript -->
+                    </div>
+                <div id="group-guess-bar-chart" style="display:none;"></div>
+                <div class="message" id="message"></div>
+                
+                <div class="keyboard group-inline" id="main-keyboard">
+                    <div class="keyboard-row">
+                        <button class="key" data-key="q">q</button>
+                        <button class="key" data-key="w">w</button>
+                        <button class="key" data-key="e">e</button>
+                        <button class="key" data-key="r">r</button>
+                        <button class="key" data-key="t">t</button>
+                        <button class="key" data-key="y">y</button>
+                        <button class="key" data-key="u">u</button>
+                        <button class="key" data-key="i">i</button>
+                        <button class="key" data-key="o">o</button>
+                        <button class="key" data-key="p">p</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <div style="width: 20px"></div>
+                        <button class="key" data-key="a">a</button>
+                        <button class="key" data-key="s">s</button>
+                        <button class="key" data-key="d">d</button>
+                        <button class="key" data-key="f">f</button>
+                        <button class="key" data-key="g">g</button>
+                        <button class="key" data-key="h">h</button>
+                        <button class="key" data-key="j">j</button>
+                        <button class="key" data-key="k">k</button>
+                        <button class="key" data-key="l">l</button>
+                        <div style="width: 20px"></div>
+                    </div>
+                    <div class="keyboard-row">
+                        <button class="key key-wide" data-key="enter">enter</button>
+                        <button class="key" data-key="z">z</button>
+                        <button class="key" data-key="x">x</button>
+                        <button class="key" data-key="c">c</button>
+                        <button class="key" data-key="v">v</button>
+                        <button class="key" data-key="b">b</button>
+                        <button class="key" data-key="n">n</button>
+                        <button class="key" data-key="m">m</button>
+                        <button class="key key-wide" data-key="backspace">⌫</button>
+                    </div>
+                </div>
+                <button id="new-game-btn">New Game</button>
+            </div>
+
+            <!-- Teclado flotante para modo grupo ("mini teclado") -->
+            <div id="group-keyboard-wrapper" class="keyboard-side" style="display:none;">
+                <div class="keyboard-row">
+                    <button class="key" data-key="q">q</button>
+                    <button class="key" data-key="w">w</button>
+                    <button class="key" data-key="e">e</button>
+                    <button class="key" data-key="r">r</button>
+                    <button class="key" data-key="t">t</button>
+                    <button class="key" data-key="y">y</button>
+                    <button class="key" data-key="u">u</button>
+                    <button class="key" data-key="i">i</button>
+                    <button class="key" data-key="o">o</button>
+                    <button class="key" data-key="p">p</button>
+                </div>
+                <div class="keyboard-row">
+                    <div style="width: 20px"></div>
+                    <button class="key" data-key="a">a</button>
+                    <button class="key" data-key="s">s</button>
+                    <button class="key" data-key="d">d</button>
+                    <button class="key" data-key="f">f</button>
+                    <button class="key" data-key="g">g</button>
+                    <button class="key" data-key="h">h</button>
+                    <button class="key" data-key="j">j</button>
+                    <button class="key" data-key="k">k</button>
+                    <button class="key" data-key="l">l</button>
+                    <div style="width: 20px"></div>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key key-wide" data-key="enter">enter</button>
+                    <button class="key" data-key="z">z</button>
+                    <button class="key" data-key="x">x</button>
+                    <button class="key" data-key="c">c</button>
+                    <button class="key" data-key="v">v</button>
+                    <button class="key" data-key="b">b</button>
+                    <button class="key" data-key="n">n</button>
+                    <button class="key" data-key="m">m</button>
+                    <button class="key key-wide" data-key="backspace">⌫</button>
+                </div>
+            </div>
+
+            <!-- Include settings panel -->
+            <div id="settings-container">
+                <div id="settings-panel" class="settings-panel open">
+                    <div class="settings-header">
+                        <h2>Settings</h2>
+                        <button id="close-settings" class="close-btn">×</button>
+                    </div>
+                    
+                    <div class="settings-section" >
+                        <div class="settings-section-header collapsed">
+                            <h3>Profile Settings</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="settings-section-content">
+                            <div class="setting-item profile-upload">
+                                <div class="profile-preview">
+                                    <img id="profile-preview-img" src="https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg" alt="Profile Preview">
+                                </div>
+                                <div class="profile-upload-controls">
+                                    <label for="profile-upload" class="upload-btn">Upload Profile Image</label>
+                                    <input type="file" id="profile-upload" accept=".png,.jpg,.jpeg,.gif" style="display: none;">
+                                    <button id="remove-profile" class="remove-btn">Remove</button>
+                                </div>
+                            </div>
+                            <div class="setting-item" style="display: flex; flex-direction: column; gap: 8px;">
+                                <label for="profile-username">Username:</label>
+                                <input
+                                    type="text"
+                                    id="profile-username"
+                                    class="setting-input-wide"
+                                    placeholder="Enter your username"
+                                    maxlength="20"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-header">
+                            <h3>Game Settings</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="settings-section-content">
+                            <div class="setting-item">
+                                <label>➤ Current Answer:</label>
+                                <div id="current-answer-display" style="font-weight: bold; color: #4CAF50; font-size: 18px; letter-spacing: 2px; text-transform: uppercase;">RIEGO</div>
+                            </div>
+                            <div class="setting-item">
+                                <label for="language-select">Language:</label>
+                                <select id="language-select" class="setting-select">
+                                    <option value="en" selected="">English</option>
+                                    <option value="es">Español</option>
+                                    <option value="pl">Polski</option>
+                                </select>
+                            </div>
+                            <div class="setting-item" style="display: none;">
+                                <label for="tiktok-play-mode">Play Mode:</label>
+                                <select id="tiktok-play-mode" class="setting-select">
+                                    <option value="individual" selected="">Individual</option>
+                                    <option value="group">Group</option>
+                                </select>
+                            </div>
+                            <div class="setting-item" style="display: none;">
+                                <label for="required-guesses" style="text-align: left;">(Group) Required Agreed Guesses:</label>
+                                <div class="number-input-container">
+                                    <button class="number-input-btn" id="decrease-guesses">-</button>
+                                    <input type="number" id="required-guesses" class="setting-input" value="5" min="3" max="7">
+                                    <button class="number-input-btn" id="increase-guesses">+</button>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <label for="word-length">Word Length:</label>
+                                <select id="word-length" class="setting-select">
+                                    <option value="4">4 Letters</option>
+                                    <option value="5" selected="">5 Letters</option>
+                                    <option value="6">6 Letters</option>
+                                    <option value="7">7 Letters</option>
+                                    <option value="8">8 Letters</option>
+                                    <option value="9">9 Letters</option>
+                                    <option value="10">10 Letters</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label for="row-count">Number of Rows:</label>
+                                <div class="number-input-container">
+                                    <button class="number-input-btn" id="decrease-rows">-</button>
+                                    <input type="number" id="row-count" class="setting-input" value="6" min="3"> <!-- Changed from 5 to 6 -->
+                                    <button class="number-input-btn" id="increase-rows">+</button>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <label for="board-width">Board Width:</label>
+                                <div class="number-input-container">
+                                    <button class="number-input-btn" id="decrease-width">-</button>
+                                    <input type="number" id="board-width" class="setting-input" value="350" min="250" step="10">
+                                    <button class="number-input-btn" id="increase-width">+</button>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <label for="round-timer-seconds">Round Timer (seconds):</label>
+                                <div class="number-input-container">
+                                    <button class="number-input-btn" id="decrease-round-timer">-</button>
+                                    <input
+                                        type="number"
+                                        id="round-timer-seconds"
+                                        class="setting-input"
+                                        value="120"
+                                        min="0"
+                                        max="600"
+                                        step="5"
+                                    >
+                                    <button class="number-input-btn" id="increase-round-timer">+</button>
+                                </div>
+                            </div>
+
+                            <!-- <div class="setting-item">
+                                <label for="guess-flow">Guess Flow:</label>
+                                <select id="guess-flow" class="setting-select">
+                                    <option value="down" selected>Down</option>
+                                    <option value="up">Up</option>
+                                </select>
+                            </div> -->
+                            <div class="setting-item">
+                                <label for="keyboard-visibility-off">Keyboard Visibility Off:</label>
+                                <input type="checkbox" id="keyboard-visibility-off" class="setting-checkbox">
+                            </div>
+                            <div class="setting-item">
+                                <label for="streak-visibility">Streak Visibility:</label>
+                                <input type="checkbox" id="streak-visibility" class="setting-checkbox" checked="">
+                            </div>
+                            <div class="setting-item">
+                                <label for="show-leaderboard">Show Leaderboard:</label>
+                                <input type="checkbox" id="show-leaderboard" class="setting-checkbox" checked>
+                            </div>
+                            <div class="setting-item">
+                                <label for="auto-start-rounds">Auto Start New Rounds:</label>
+                                <input type="checkbox" id="auto-start-rounds" class="setting-checkbox" checked>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-header collapsed">
+                            <h3>Simulate Activity</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="settings-section-content">
+                            <div class="setting-item">
+                                <label for="simulate-guesses">Simulate Audience Guesses:</label>
+                                <input type="checkbox" id="simulate-guesses" class="setting-checkbox">
+                            </div>
+                            <div class="setting-item">
+                                <label for="group-guess-bar">Simulate Group Guesses:</label>
+                                <input type="checkbox" id="group-guess-bar" class="setting-checkbox">
+                            </div>
+                            <div class="setting-item">
+                                <label for="group-guess-loss">Simulate Group Loss:</label>
+                                <input type="checkbox" id="group-guess-loss" class="setting-checkbox">
+                            </div>
+                            <div class="setting-item" style="display: none;">
+                                <label for="stack-height">Stack Height (px):</label>
+                                <div class="number-input-container">
+                                    <button style="display: none;" class="number-input-btn" id="decrease-height" disabled="">-</button>
+                                    <input type="number" id="stack-height" class="setting-input" value="220" min="120" max="320" step="10" readonly="">
+                                    <button style="display: none;" class="number-input-btn" id="increase-height" disabled="">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-header collapsed">
+                            <h3>Winning Popup Settings</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="settings-section-content">
+                            <div class="setting-item setting-item-column">
+                                <label for="winning-sound-url">Winning Sound URL:</label>
+                                <input
+                                    type="url"
+                                    id="winning-sound-url"
+                                    class="setting-input-wide"
+                                    placeholder="https://example.com/sound.mp3"
+                                    value="https://www.myinstants.com/media/sounds/victory_6.mp3"
+                                >
+                            </div>
+                            <div class="setting-item">
+                                <label for="winning-modal-duration">Modal Duration (seconds):</label>
+                                <div class="number-input-container">
+                                    <button class="number-input-btn" id="decrease-duration">-</button>
+                                    <input type="number" id="winning-modal-duration" class="setting-input" value="5" min="1" max="10">
+                                    <button class="number-input-btn" id="increase-duration">+</button>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <button id="test-winning-sound" class="test-btn">Test Sound</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-header collapsed">
+                            <h3>Instruction Popup Settings</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+
+                        <div class="settings-section-content">
+
+                            <!-- seguimos horizontal: label + checkbox al lado -->
+                            <div class="setting-item">
+                                <label for="instruction-popup-active">Show at Round Start:</label>
+                                <input type="checkbox" id="instruction-popup-active" class="setting-checkbox">
+                            </div>
+
+                            <!-- seguimos horizontal: label + number chooser -->
+                            <div class="setting-item">
+                                <label for="instruction-popup-duration">Display Duration (seconds):</label>
+                                <div class="number-input-container">
+                                    <button class="number-input-btn" id="decrease-instruction-duration">-</button>
+                                    <input
+                                        type="number"
+                                        id="instruction-popup-duration"
+                                        class="setting-input"
+                                        value="3"
+                                        min="1"
+                                        max="10"
+                                    >
+                                    <button class="number-input-btn" id="increase-instruction-duration">+</button>
+                                </div>
+                            </div>
+
+                            <!-- AHORA en columna -->
+                            <div class="setting-item setting-item-column">
+                                <label for="instruction-popup-text">Instruction Text:</label>
+                                <textarea
+                                    id="instruction-popup-text"
+                                    class="setting-textarea"
+                                    placeholder="Enter your instruction text here..."
+                                    rows="3"
+                                >
+                                    Guess the word to win! This is wordle with endless guesses.
+                                </textarea>
+                            </div>
+
+                            <!-- TAMBIÉN columna -->
+                            <div class="setting-item setting-item-column">
+                                <label for="instruction-popup-gif">GIF URL (optional):</label>
+                                <input
+                                    type="url"
+                                    id="instruction-popup-gif"
+                                    class="setting-input-wide"
+                                    placeholder="https://example.com/instruction.gif"
+                                    value="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdHBlcWdrYjFvYW1hZWt3ZGg2eGw1YWlmZm80NHZ4ZWZ4OHpub3RxdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/62HRHz7zZZYThhTwEI/giphy.gif"
+                                >
+                            </div>
+
+                            <!-- este puede quedarse simple -->
+                            <div class="setting-item">
+                                <button id="test-instruction-popup" class="test-btn">Test Popup</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="settings-section">
+                        <div class="settings-section-header collapsed">
+                            <h3>Text-to-Speech Settings</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="settings-section-content">
+                            <div class="setting-item">
+                                <label for="tts-enabled">Enable Text-to-Speech:</label>
+                                <input type="checkbox" id="tts-enabled" class="setting-checkbox">
+                            </div>
+                            <div class="setting-item setting-item-column">
+                                <label for="tts-voice">Voice:</label>
+                                <select id="tts-voice" class="setting-select" style="max-width: 250px;">
+                                    <option value="">Default Voice</option>
+                                    <option value="Microsoft Raul - Spanish (Mexico)">Microsoft Raul - Spanish (Mexico) (es-MX) - Default</option>
+                                    <option value="Microsoft Sabina - Spanish (Mexico)">Microsoft Sabina - Spanish (Mexico) (es-MX)</option>
+                                    <option value="Google Deutsch">Google Deutsch (de-DE)</option>
+                                    <option value="Google US English">Google US English (en-US)</option>
+                                    <option value="Google UK English Female">Google UK English Female (en-GB)</option>
+                                    <option value="Google UK English Male">Google UK English Male (en-GB)</option>
+                                    <option value="Google español">Google español (es-ES)</option>
+                                    <option value="Google español de Estados Unidos">Google español de Estados Unidos (es-US)</option>
+                                    <option value="Google français">Google français (fr-FR)</option>
+                                    <option value="Google हिन्दी">Google हिन्दी (hi-IN)</option>
+                                    <option value="Google Bahasa Indonesia">Google Bahasa Indonesia (id-ID)</option>
+                                    <option value="Google italiano">Google italiano (it-IT)</option>
+                                    <option value="Google 日本語">Google 日本語 (ja-JP)</option>
+                                    <option value="Google 한국의">Google 한국의 (ko-KR)</option>
+                                    <option value="Google Nederlands">Google Nederlands (nl-NL)</option>
+                                    <option value="Google polski">Google polski (pl-PL)</option>
+                                    <option value="Google português do Brasil">Google português do Brasil (pt-BR)</option>
+                                    <option value="Google русский">Google русский (ru-RU)</option>
+                                    <option value="Google&nbsp;普通话（中国大陆）">Google&nbsp;普通话（中国大陆） (zh-CN)</option>
+                                    <option value="Google&nbsp;粤語（香港）">Google&nbsp;粤語（香港） (zh-HK)</option>
+                                    <option value="Google 國語（臺灣）">Google 國語（臺灣） (zh-TW)</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label for="tts-volume">Volume:</label>
+                                <div class="number-input-container">
+                                    <button class="number-input-btn" id="decrease-tts-volume">-</button>
+                                    <input type="number" id="tts-volume" class="setting-input" value="50" min="0" max="100" step="10">
+                                    <button class="number-input-btn" id="increase-tts-volume">+</button>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <label for="tts-rate">Speech Rate:</label>
+                                <div class="number-input-container">
+                                    <button class="number-input-btn" id="decrease-tts-rate">-</button>
+                                    <input type="number" id="tts-rate" class="setting-input" value="10" min="5" max="12" step="1">
+                                    <button class="number-input-btn" id="increase-tts-rate">+</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Read Every Word -->
+                            <div class="setting-item">
+                                <label for="tts-read-words">Read Every Word Entered:</label>
+                                <input type="checkbox" id="tts-read-words" class="setting-checkbox">
+                            </div>
+                            
+                            <!-- Round Start TTS -->
+                            <div class="setting-item">
+                                <label for="tts-round-start-enabled">Round Start Announcements:</label>
+                                <input type="checkbox" id="tts-round-start-enabled" class="setting-checkbox">
+                            </div>
+                            <div class="setting-item setting-item-column">
+                                <label for="tts-round-start-texts">Round Start Messages (separate with ;):</label>
+                                <textarea id="tts-round-start-texts" class="setting-textarea" placeholder="Enter messages separated by semicolons..." rows="3">Welcome to Wordle! Let's begin.; New round starting! Good luck!; Time to guess the word!</textarea>
+                            </div>
+                            
+                            <!-- Game Won TTS -->
+                            <div class="setting-item">
+                                <label for="tts-game-won-enabled">Victory Announcements:</label>
+                                <input type="checkbox" id="tts-game-won-enabled" class="setting-checkbox">
+                            </div>
+                            <div class="setting-item setting-item-column">
+                                <label for="tts-game-won-texts">Victory Messages (separate with ;):</label>
+                                <textarea id="tts-game-won-texts" class="setting-textarea" placeholder="Enter messages separated by semicolons..." rows="3">Congratulations! You won!; Excellent work! Victory achieved!; Well done! You guessed it!</textarea>
+                            </div>
+                            
+                            <!-- Gameplay Interval TTS -->
+                            <div class="setting-item">
+                                <label for="tts-gameplay-enabled">Gameplay Announcements:</label>
+                                <input type="checkbox" id="tts-gameplay-enabled" class="setting-checkbox">
+                            </div>
+                            <div class="setting-item">
+                                <label for="tts-gameplay-interval">Announcement Interval (seconds):</label>
+                                <div class="number-input-container">
+                                    <button class="number-input-btn" id="decrease-tts-interval">-</button>
+                                    <input type="number" id="tts-gameplay-interval" class="setting-input" value="30" min="10" max="300" step="10">
+                                    <button class="number-input-btn" id="increase-tts-interval">+</button>
+                                </div>
+                            </div>
+                            <div class="setting-item setting-item-column">
+                                <label for="tts-gameplay-texts">Gameplay Messages (separate with ;):</label>
+                                <textarea id="tts-gameplay-texts" class="setting-textarea" placeholder="Enter messages separated by semicolons..." rows="3">Keep going! You can do it!; Think carefully about your next guess.; You're doing great!</textarea>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <button id="test-tts" class="test-btn">Test TTS</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Toggle Button -->
+                <button id="settings-toggle" class="settings-toggle">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"></path>
+                    </svg>
+                </button> 
+            </div>
+
+            <!-- Winning Modal -->
+            <div id="winning-overlay" class="winning-overlay">
+                <div id="winning-modal" class="winning-modal">
+                    <div id="winning-title" class="winning-title">Congratulations!</div>
+                    <div id="winning-word" class="winning-word"></div>
+                    
+                    <!-- Single Player Winner -->
+                    <div id="single-winner" class="single-winner">
+                        <img id="winner-photo" class="winner-photo" src="" alt="Winner">
+                        <div id="winner-name" class="winner-name"></div>
+                    </div>
+                    
+                    <!-- Group Winners -->
+                    <div id="group-winners" class="group-winners">
+                        <!-- Multiple winners will be populated here -->
+                    </div>
+                    
+                    <!-- Streak Metrics -->
+                    <div id="modal-streak-metrics" class="modal-streak-metrics">
+                        <div class="modal-streak-item">
+                            <div class="modal-streak-number" id="modal-current-streak">0</div>
+                            <div class="modal-streak-label">Current Streak</div>
+                        </div>
+                        <div class="modal-streak-item">
+                            <div class="modal-streak-number" id="modal-max-streak">0</div>
+                            <div class="modal-streak-label">Max Streak</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instruction Popup -->
+            <div id="instruction-popup" class="instruction-popup">
+                <div id="instruction-popup-content" class="instruction-popup-content">
+                    <div id="instruction-popup-text-display" class="instruction-popup-text"></div>
+                    <img id="instruction-popup-gif-display" class="instruction-popup-gif" src="" alt="" style="display: none;">
+                </div>
+            </div>
+
+            <!-- Statistics Card -->
+            <div id="statistics-card" class="statistics-card hidden">
+                <div class="statistics-header">
+                    <h3>STATISTICS</h3>
+                    <button id="close-statistics" class="close-statistics-btn">×</button>
+                </div>
+                <div class="statistics-content">
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-number" id="played-count">0</div>
+                            <div class="stat-label">Played</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="win-percentage">0</div>
+                            <div class="stat-label">Win %</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="current-streak">0</div>
+                            <div class="stat-label">Current Streak</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="max-streak">0</div>
+                            <div class="stat-label">Max Streak</div>
+                        </div>
+                    </div>
+                    <div class="statistics-actions">
+                        <button id="clear-statistics" class="clear-statistics-btn">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Button -->
+            <button id="info-toggle" class="info-toggle">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/>
+                </svg>
+            </button>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

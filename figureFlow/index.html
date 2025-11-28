@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Figure Flow</title>
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+    <div id="sidebar">
+        <h1>Scoreboard</h1>
+        <ol id="victoryScoreList" class="vscore-list"></ol>
+        <button id="resetVictoryScoreBtn" class="vscore-reset">Reset</button>
+    </div>
+    <div id="main">
+        <!-- Next Up -->
+        <div id="nextUp">
+            <h2 id="nextHeader" style="display:none;">Playing Next:</h2>
+            <div class="queue-grid"></div>
+        </div>
+        <!-- Leaderboard -->
+        <div id="leaderboard">
+            <h2>Time Rankings</h2>
+            <div class="leaderboard-grid"></div>
+        </div>
+        <!-- Notification Card -->
+        <div id="notificationCard">
+            <img src="" alt="User Image">
+            <div id="notificationText"></div>
+        </div>
+    </div>
+    <script defer src="./main.js"></script>
+</body>
+</html>

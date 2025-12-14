@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PushPullGame</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&family=Fira+Code:wght@700&family=JetBrains+Mono:wght@800&family=Press+Start+2P&family=Orbitron:wght@900&family=VT323&family=Share+Tech+Mono&family=Black+Ops+One&family=Audiowide&family=Bangers&family=Permanent+Marker&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <div id="game-scaler">
+
+        <div id="settingsBtn">⚙️</div>
+
+        <div id="settingsPanel">
+            <h3 data-i18n="config_title">CONFIGURACIÓN</h3>
+            
+            <div class="setting-group">
+                <h4 data-i18n="general">General</h4>
+                <div class="setting-row">
+                    <label data-i18n="language">Idioma</label>
+                    <select id="cfgLanguage">
+                        <option value="es">Español</option>
+                        <option value="en">English</option>
+                        <option value="it">Italiano</option>
+                        <option value="pt">Português</option>
+                    </select>
+                </div>
+                
+                <div class="setting-row">
+                    <label data-i18n="font_style">Fuente Timer</label>
+                    <select id="cfgFont">
+                        <option value="'Roboto Mono', monospace">Roboto Mono</option>
+                        <option value="'Fira Code', monospace">Fira Code</option>
+                        <option value="'JetBrains Mono', monospace">JetBrains</option>
+                        <option value="'Press Start 2P', cursive">Pixel Art</option>
+                        <option value="'Orbitron', sans-serif">Sci-Fi (Orbitron)</option>
+                        <option value="'VT323', monospace">Retro Terminal</option>
+                        <option value="'Share Tech Mono', monospace">Tech Data</option>
+                        <option value="'Black Ops One', system-ui">Military Stencil</option>
+                        <option value="'Audiowide', sans-serif">Futuristic Wide</option>
+                        <option value="'Bangers', system-ui">Comic Book</option>
+                        <option value="'Permanent Marker', cursive">Marker Hand</option>
+                    </select>
+                </div>
+
+                <div class="setting-row">
+                    <label data-i18n="edit_mode">Modo Edición</label>
+                    <input type="checkbox" id="cfgEditMode">
+                </div>
+                <div class="setting-row">
+                    <label data-i18n="dynamic_size">Tamaño Dinámico</label>
+                    <input type="checkbox" id="cfgDynamicSizing">
+                </div>
+                <div class="setting-row">
+                    <label data-i18n="scale_mode">Ajuste Pantalla</label>
+                    <select id="cfgScaleMode">
+                        <option value="fit">Fit (Barras)</option>
+                        <option value="stretch">Stretch (Estirar)</option>
+                    </select>
+                </div>
+
+                <div class="setting-row" style="background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; padding: 5px; border-radius: 5px;">
+                    <label data-i18n="points_to_win" style="color: #ffd700; font-weight: bold;">Puntos para Ganar</label>
+                    <input type="number" id="cfgPointsToWin" min="1" max="1000" style="width: 80px; font-weight: bold; color: #ffd700;">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h4 data-i18n="team_left">Equipo Izquierda</h4>
+                <div class="setting-row"><label>Color Fondo</label> <input type="color" id="cfgBgGirl"></div>
+                
+                <div class="setting-row"><label data-i18n="name">Nombre</label> <input type="text" id="cfgNameGirl"></div>
+                <div class="setting-row"><label data-i18n="color_text">Color Texto</label> <input type="color" id="cfgColorGirlText"></div>
+                <div class="setting-row"><label data-i18n="size_name">Tam. Nombre</label> <input type="number" id="cfgSizeGirlName"></div>
+                <div class="setting-row"><label data-i18n="size_score">Tam. Puntaje</label> <input type="number" id="cfgSizeGirlScore"></div>
+                <div class="setting-row"><label data-i18n="scale_img">Escala Img</label> <input type="range" min="0.5" max="3.0" step="0.1" id="cfgScaleGirl"></div>
+                <div class="setting-row"><label data-i18n="flip">Voltear</label> <input type="checkbox" id="cfgFlipGirl"></div>
+            </div>
+
+            <div class="setting-group">
+                <h4 data-i18n="team_right">Equipo Derecha</h4>
+                <div class="setting-row"><label>Color Fondo</label> <input type="color" id="cfgBgBoy"></div>
+                
+                <div class="setting-row"><label data-i18n="name">Nombre</label> <input type="text" id="cfgNameBoy"></div>
+                <div class="setting-row"><label data-i18n="color_text">Color Texto</label> <input type="color" id="cfgColorBoyText"></div>
+                <div class="setting-row"><label data-i18n="size_name">Tam. Nombre</label> <input type="number" id="cfgSizeBoyName"></div>
+                <div class="setting-row"><label data-i18n="size_score">Tam. Puntaje</label> <input type="number" id="cfgSizeBoyScore"></div>
+                <div class="setting-row"><label data-i18n="scale_img">Escala Img</label> <input type="range" min="0.5" max="3.0" step="0.1" id="cfgScaleBoy"></div>
+                <div class="setting-row"><label data-i18n="flip">Voltear</label> <input type="checkbox" id="cfgFlipBoy"></div>
+            </div>
+
+            <div class="setting-group">
+                <h4 data-i18n="timer">Temporizador</h4>
+                <div class="setting-row"><label data-i18n="initial_time">Tiempo Inicial (s)</label> <input type="number" id="cfgInitialTime"></div>
+                <div class="setting-row"><label data-i18n="color">Color</label> <input type="color" id="cfgColorTimer"></div>
+                <div class="setting-row"><label data-i18n="size">Tamaño</label> <input type="number" id="cfgSizeTimer"></div>
+                <div class="setting-row"><label data-i18n="pos_y">Posición Y</label> <input type="range" min="0" max="90" id="cfgPosTimer"></div>
+            </div>
+
+            <div class="setting-group">
+                <h4>Snipe Mode</h4>
+                <div class="setting-row"><label data-i18n="activate">Activar</label> <input type="checkbox" id="cfgSnipeActive"></div>
+                <div class="setting-row"><label data-i18n="extra_sec">Segundos Extra</label> <input type="number" id="cfgSnipeSeconds"></div>
+                <div class="setting-row"><label data-i18n="alert_color">Color Alerta</label> <input type="color" id="cfgSnipeColor"></div>
+            </div>
+
+            <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 10px;">
+                <button id="closeSettings" data-i18n="save_close">GUARDAR Y CERRAR</button>
+                <button id="resetDefaults" class="danger-btn" data-i18n="reset_factory">⚠️ RESTAURAR</button>
+            </div>
+        </div>
+
+        <div id="winModal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content-gaming">
+                <div class="modal-glow"></div>
+                <h2 id="winnerText">GANADOR</h2>
+                <div id="winnerSubtext">Reiniciando ronda...</div>
+            </div>
+        </div>
+
+        <div id="gameContainer">
+            <div class="left-side" id="bgLeft"></div>
+            <div class="right-side" id="bgRight"></div>
+            <div class="meta-zone left-meta"></div>
+            <div class="meta-zone right-meta"></div>
+
+            <div class="top-ui">
+                <div id="roundDisplay">ROUND 1</div>
+            </div>
+
+            <img src="images/girl.avif" alt="Girl" class="character" id="girl">
+            <div class="divider"></div>
+            <img src="images/boy.avif" alt="Boy" class="character" id="boy">
+
+            <div class="timer-container" id="timerContainer">
+                <div id="timerDisplay">00:00</div>
+            </div>
+
+            <div class="score-wrapper">
+                <div class="score-box girl-box">
+                    <span id="girlScoreVal" class="big-score">0</span>
+                    <span id="girlNameDisplay" class="score-name">GIRLS</span>
+                </div>
+                <div class="score-box boy-box">
+                    <span id="boyScoreVal" class="big-score">0</span>
+                    <span id="boyNameDisplay" class="score-name">BOYS</span>
+                </div>
+            </div>
+        </div>
+
+    </div> 
+    <script src="script.js"></script>
+</body>
+</html>
